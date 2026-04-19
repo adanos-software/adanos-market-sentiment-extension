@@ -62,6 +62,9 @@ describe("Chrome Web Store scope", () => {
     expect(contentStyles).toContain(".adanos-ms-trendline");
     expect(contentStyles).toContain(".adanos-ms-summary");
     expect(contentStyles).toContain(".adanos-ms-metric-value.falling");
+    expect(contentStyles).toContain("background-size: 100% 1px");
+    expect(contentStyles).toContain("text-decoration: none");
+    expect(contentStyles).not.toContain("border-bottom: 1px dotted");
     expect(contentStyles).not.toContain('content: "●  ●  ●"');
   });
 });
