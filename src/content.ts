@@ -523,7 +523,7 @@ function trendSummary(record: SentimentRecord, source: StockSource): HTMLElement
 function tooltipFooter(): HTMLElement {
   const footer = document.createElement("a");
   footer.className = "adanos-ms-footer";
-  footer.href = "https://adanos.org/widgets";
+  footer.href = "https://adanos.org";
   footer.target = "_blank";
   footer.rel = "noreferrer";
   footer.textContent = "Powered by Adanos";
