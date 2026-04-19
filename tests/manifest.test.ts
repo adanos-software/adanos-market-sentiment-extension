@@ -69,4 +69,18 @@ describe("Chrome Web Store scope", () => {
     expect(contentStyles).not.toContain("border-bottom: 1px dotted");
     expect(contentStyles).not.toContain('content: "●  ●  ●"');
   });
+
+  it("keeps the popup on the light Adanos card system", () => {
+    const popupScript = readFileSync(resolve("src/popup.ts"), "utf8");
+    const popupStyles = readFileSync(resolve("src/styles.css"), "utf8");
+
+    expect(popupScript).toContain('class: "sentiment-card"');
+    expect(popupScript).toContain('class: "trendline"');
+    expect(popupScript).toContain('class: "sentiment-summary"');
+    expect(popupStyles).toContain(".sentiment-card");
+    expect(popupStyles).toContain("background: #fff");
+    expect(popupStyles).toContain("--c-red: #e11936");
+    expect(popupStyles).not.toContain("--c-terminal");
+    expect(popupStyles).not.toContain('content: "●  ●  ●"');
+  });
 });

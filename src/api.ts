@@ -17,6 +17,7 @@ export type SentimentRecord = {
   totalUpvotes: number | null;
   tradeCount: number | null;
   trend: string | null;
+  trendHistory: number[];
   uniquePosts: number | null;
   uniqueTweets: number | null;
   uniqueTraders: number | null;
@@ -41,6 +42,7 @@ type RawSentimentRecord = {
   total_upvotes?: unknown;
   trade_count?: unknown;
   trend?: unknown;
+  trend_history?: unknown;
   unique_posts?: unknown;
   unique_traders?: unknown;
   unique_tweets?: unknown;
@@ -72,6 +74,11 @@ function toStringValue(value: unknown): string | null {
   return trimmed.length ? trimmed : null;
 }
 
+function toNumberArray(value: unknown): number[] {
+  if (!Array.isArray(value)) return [];
+  return value.map((item) => toNumber(item)).filter((item): item is number => item !== null);
+}
+
 function normalizeRecord(record: RawSentimentRecord): SentimentRecord | null {
   const ticker = toStringValue(record.ticker) ?? toStringValue(record.symbol);
   if (!ticker) return null;
@@ -91,6 +98,7 @@ function normalizeRecord(record: RawSentimentRecord): SentimentRecord | null {
     totalUpvotes: toNumber(record.total_upvotes),
     tradeCount: toNumber(record.trade_count),
     trend: toStringValue(record.trend),
+    trendHistory: toNumberArray(record.trend_history),
     uniquePosts: toNumber(record.unique_posts),
     uniqueTweets: toNumber(record.unique_tweets),
     uniqueTraders: toNumber(record.unique_traders),

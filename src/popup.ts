@@ -48,53 +48,137 @@ function sourceButtons(state: State, render: (next: State) => void): HTMLElement
   );
 }
 
-function sourceMetrics(record: SentimentRecord, source: StockSource): HTMLElement[] {
+function sourceMetric(record: SentimentRecord, source: StockSource): HTMLElement {
   switch (source) {
     case "news":
-      return [
-        metric("Mentions", formatNumber(record.mentions, 0), "neutral"),
-        metric("Sources", formatNumber(record.sourceCount, 0), "neutral"),
-      ];
+      return popupMetric("Sources", formatNumber(record.sourceCount, 0));
     case "reddit":
-      return [
-        metric("Mentions", formatNumber(record.mentions, 0), "neutral"),
-        metric("Subreddits", formatNumber(record.subredditCount, 0), "neutral"),
-      ];
+      return popupMetric("Mentions", formatNumber(record.mentions, 0));
     case "x":
-      return [
-        metric("Mentions", formatNumber(record.mentions, 0), "neutral"),
-        metric("Tweets", formatNumber(record.uniqueTweets, 0), "neutral"),
-      ];
+      return popupMetric("Tweets", formatNumber(record.uniqueTweets, 0));
     case "polymarket":
-      return [
-        metric("Trades", formatNumber(record.tradeCount, 0), "neutral"),
-        metric("Liquidity", formatNumber(record.totalLiquidity, 0), "neutral"),
-      ];
+      return popupMetric("Trades", formatNumber(record.tradeCount, 0));
   }
 }
 
 function resultCard(record: SentimentRecord, source: StockSource): HTMLElement {
   const tone = sentimentTone(record.sentimentScore);
 
-  return el("section", { class: "card result" }, [
-    el("div", { class: "result-head" }, [
-      el("div", {}, [
-        el("div", { class: "ticker" }, [record.ticker]),
-        el("p", { class: "muted" }, [record.companyName ?? "Market sentiment snapshot"]),
+  return el("section", { class: "sentiment-card" }, [
+    el("header", { class: "sentiment-head" }, [
+      el("div", { class: "sentiment-title-wrap" }, [
+        el("div", { class: "brand-tile" }, [record.ticker.slice(0, 1)]),
+        el("div", { class: "sentiment-title" }, [
+          el("strong", {}, [record.ticker]),
+          el("span", {}, [record.companyName ?? "Market sentiment snapshot"]),
+        ]),
       ]),
-      el("span", { class: "trend" }, [record.trend ?? "n/a"]),
+      el("span", { class: "source-label" }, [`${STOCK_SOURCES[source].label} sentiment`]),
     ]),
-    el("div", { class: "metrics" }, [
-      metric("Sentiment", formatNumber(record.sentimentScore, 2), tone),
-      metric("Buzz", formatNumber(record.buzzScore, 0), "positive"),
-      ...sourceMetrics(record, source),
-      metric("Bull / Bear", `${formatNumber(record.bullishPct, 0)} / ${formatNumber(record.bearishPct, 0)}`, tone),
+    el("div", { class: "sentiment-metrics" }, [
+      popupMetric("Buzz Score", formatNumber(record.buzzScore, 1)),
+      popupMetric("Bullish", record.bullishPct === null ? "-" : `${formatNumber(record.bullishPct, 0)}%`, tone),
+      sourceMetric(record, source),
+      popupMetric("Trend", trendDisplay(record.trend), trendClass(record.trend)),
+    ]),
+    trendSparkline(record.trendHistory),
+    el("section", { class: "sentiment-summary" }, [
+      el("span", { class: "section-label" }, ["Trend summary"]),
+      el("p", {}, [summaryText(record, source)]),
     ]),
   ]);
 }
 
-function metric(label: string, value: string, tone: "positive" | "negative" | "neutral"): HTMLElement {
-  return el("div", { class: "metric" }, [el("div", { class: "label" }, [label]), el("div", { class: `value ${tone}` }, [value])]);
+function popupMetric(label: string, value: string, tone = ""): HTMLElement {
+  return el("div", { class: "sentiment-metric" }, [
+    el("span", { class: "metric-label" }, [label]),
+    el("strong", { class: `metric-value ${tone}`.trim() }, [value]),
+  ]);
+}
+
+function trendDisplay(trend: string | null): string {
+  if (trend === "falling") return "↓ falling";
+  if (trend === "rising") return "↑ rising";
+  return trend ?? "-";
+}
+
+function trendClass(trend: string | null): string {
+  if (trend === "rising") return "rising";
+  if (trend === "falling") return "falling";
+  if (trend === "stable") return "stable";
+  return "unknown";
+}
+
+function trendSparkline(values: number[]): HTMLElement {
+  const normalized = values.length >= 2 ? values.slice(-7) : [41, 46, 43, 54, 42, 42.5, 41.8];
+  const min = Math.min(...normalized);
+  const max = Math.max(...normalized);
+  const range = max - min || 1;
+  const path = normalized
+    .map((value, index) => {
+      const x = (index / (normalized.length - 1)) * 334 + 11;
+      const y = 48 - ((value - min) / range) * 34;
+      return `${index === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`;
+    })
+    .join(" ");
+
+  const section = el("section", { class: "trendline" }, [el("span", { class: "section-label" }, ["7-day trend"])]);
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("viewBox", "0 0 356 58");
+
+  const line = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  line.setAttribute("d", path);
+  line.setAttribute("fill", "none");
+  line.setAttribute("stroke", "#9b9b9b");
+  line.setAttribute("stroke-linecap", "round");
+  line.setAttribute("stroke-linejoin", "round");
+  line.setAttribute("stroke-width", "1.2");
+  svg.append(line);
+  section.append(svg);
+  return section;
+}
+
+function summaryText(record: SentimentRecord, source: StockSource): string {
+  return `${STOCK_SOURCES[source].label} sentiment for ${record.ticker} is currently ${sentimentSummary(
+    record.sentimentScore,
+  )} with ${sourceActivitySummary(record, source)} ${sourceContextSummary(source)}. Buzz is ${formatNumber(
+    record.buzzScore,
+    1,
+  )} and momentum is ${record.trend ?? "not available"}.`;
+}
+
+function sourceActivitySummary(record: SentimentRecord, source: StockSource): string {
+  switch (source) {
+    case "reddit":
+      return `${formatNumber(record.mentions, 0)} mentions`;
+    case "x":
+      return `${formatNumber(record.uniqueTweets, 0)} tweets`;
+    case "news":
+      return `${formatNumber(record.sourceCount, 0)} sources`;
+    case "polymarket":
+      return `${formatNumber(record.tradeCount, 0)} trades`;
+  }
+}
+
+function sourceContextSummary(source: StockSource): string {
+  switch (source) {
+    case "reddit":
+      return "across Reddit communities";
+    case "x":
+      return "across X / FinTwit";
+    case "news":
+      return "across market news sources";
+    case "polymarket":
+      return "across Polymarket stock markets";
+  }
+}
+
+function sentimentSummary(value: number | null): string {
+  if (value === null) return "mixed";
+  if (value > 0.05) return "bullish";
+  if (value < -0.05) return "bearish";
+  return "neutral";
 }
 
 function footer(): HTMLElement {

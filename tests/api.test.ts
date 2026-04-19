@@ -25,6 +25,7 @@ describe("Adanos API client", () => {
             source_count: 12,
             ticker: "NVDA",
             trend: "rising",
+            trend_history: ["61", 64, null, "67.5"],
           },
         ],
       }),
@@ -47,6 +48,7 @@ describe("Adanos API client", () => {
       sentimentScore: 0.34,
       ticker: "NVDA",
       trend: "rising",
+      trendHistory: [61, 64, 67.5],
     });
   });
 
