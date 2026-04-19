@@ -3,7 +3,7 @@
   "name": "Adanos Market Sentiment",
   "short_name": "Adanos MS",
   "version": "0.1.0",
-  "description": "Check stock market sentiment from News, Reddit, X, and Polymarket for selected tickers.",
+  "description": "Check stock market sentiment from Reddit, X, News, and Polymarket for selected tickers.",
   "homepage_url": "https://adanos.org",
   "icons": {
     "16": "icons/icon-16.png",
@@ -23,6 +23,15 @@
     "service_worker": "background.js",
     "type": "module"
   },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "exclude_matches": ["https://api.adanos.org/*", "https://adanos.org/*"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
   "options_page": "options.html",
   "permissions": ["storage", "contextMenus"],
   "host_permissions": ["https://api.adanos.org/*"]

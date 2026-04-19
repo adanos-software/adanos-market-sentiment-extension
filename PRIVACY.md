@@ -12,9 +12,15 @@ The extension stores the following data in Chrome local storage:
 - Stock watchlist
 - Last selected context-menu ticker
 
+## Data Processed Locally
+
+The extension scans visible webpage text locally in the browser to detect likely
+stock ticker symbols. Page contents are not sent to Adanos.
+
 ## Data Sent to Adanos
 
-When the user requests a sentiment lookup, the extension sends:
+When the user requests a sentiment lookup or hovers a detected ticker, the
+extension sends:
 
 - The selected stock ticker symbols
 - The selected analysis period

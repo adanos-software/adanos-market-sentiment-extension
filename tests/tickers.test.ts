@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { normalizeTicker, parseTickerList } from "../src/tickers";
+import { findTickerMentions, normalizeTicker, parseTickerList } from "../src/tickers";
 
 describe("ticker parsing", () => {
   it("normalizes stock ticker selections", () => {
@@ -29,5 +29,18 @@ describe("ticker parsing", () => {
       "NFLX",
     ]);
   });
-});
 
+  it("finds likely ticker mentions in page text", () => {
+    expect(findTickerMentions("NVDA rallied while $TSLA lagged and BRK.B stayed flat.")).toEqual([
+      { start: 0, end: 4, ticker: "NVDA" },
+      { start: 19, end: 24, ticker: "TSLA" },
+      { start: 36, end: 41, ticker: "BRK.B" },
+    ]);
+  });
+
+  it("avoids common uppercase false positives while allowing prefixed ambiguous tickers", () => {
+    expect(findTickerMentions("The API is for US users and $AI remains valid.")).toEqual([
+      { start: 28, end: 31, ticker: "AI" },
+    ]);
+  });
+});

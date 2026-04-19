@@ -114,7 +114,7 @@ function render(state: State): void {
         el("div", {}, [el("p", { class: "eyebrow" }, ["Real-time market sentiment API"]), el("h1", {}, [PRODUCT_NAME])]),
       ]),
       state.settings.apiKey
-        ? el("p", { class: "muted" }, ["Check stock sentiment across News, Reddit, X, and Polymarket with one Adanos API key."])
+        ? el("p", { class: "muted" }, ["Check stock sentiment across Reddit, X, News, and Polymarket with one Adanos API key."])
         : el("section", { class: "card stack" }, [
             el("p", { class: "eyebrow" }, ["Quick setup"]),
             el("h2", {}, ["Add your Adanos API key"]),

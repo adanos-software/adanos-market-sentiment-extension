@@ -32,7 +32,7 @@ describe("settings storage", () => {
 
     await expect(loadSettings()).resolves.toMatchObject({
       days: 7,
-      source: "news",
+      source: "reddit",
       watchlist: ["NVDA", "TSLA", "AAPL"],
     });
   });
@@ -49,7 +49,7 @@ describe("settings storage", () => {
     await expect(loadSettings()).resolves.toMatchObject({
       apiKey: "sk_live_test",
       days: 7,
-      source: "news",
+      source: "reddit",
       watchlist: ["NVDA"],
     });
   });

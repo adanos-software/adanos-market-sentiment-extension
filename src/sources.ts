@@ -1,9 +1,4 @@
 export const STOCK_SOURCES = {
-  news: {
-    label: "News",
-    path: "news/stocks/v1",
-    summary: "Financial publisher coverage and market headlines.",
-  },
   reddit: {
     label: "Reddit",
     path: "reddit/stocks/v1",
@@ -14,6 +9,11 @@ export const STOCK_SOURCES = {
     path: "x/stocks/v1",
     summary: "Cashtag sentiment and attention from market conversations.",
   },
+  news: {
+    label: "News",
+    path: "news/stocks/v1",
+    summary: "Financial publisher coverage and market headlines.",
+  },
   polymarket: {
     label: "Polymarket",
     path: "polymarket/stocks/v1",
@@ -23,9 +23,8 @@ export const STOCK_SOURCES = {
 
 export type StockSource = keyof typeof STOCK_SOURCES;
 
-export const DEFAULT_SOURCE: StockSource = "news";
+export const DEFAULT_SOURCE: StockSource = "reddit";
 
 export function isStockSource(value: string): value is StockSource {
   return Object.prototype.hasOwnProperty.call(STOCK_SOURCES, value);
 }
-
