@@ -8,9 +8,13 @@ describe("Chrome Web Store scope", () => {
   it("keeps extension permissions narrow", () => {
     const manifest = JSON.parse(readFileSync(resolve("public/manifest.json"), "utf8")) as {
       host_permissions: string[];
+      name: string;
       permissions: string[];
+      short_name: string;
     };
 
+    expect(manifest.name).toBe("Adanos Market Sentiment");
+    expect(manifest.short_name).toBe("Adanos MS");
     expect(manifest.permissions).toEqual(["storage", "contextMenus"]);
     expect(manifest.host_permissions).toEqual(["https://api.adanos.org/*"]);
   });
@@ -25,4 +29,3 @@ describe("Chrome Web Store scope", () => {
     ]);
   });
 });
-

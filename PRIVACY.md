@@ -1,6 +1,6 @@
 # Privacy Policy
 
-Adanos Sentiment Lens is designed to keep user data minimal and local.
+Adanos Market Sentiment is designed to keep user data minimal and local.
 
 ## Data Stored Locally
 

@@ -1,5 +1,6 @@
 import "./styles.css";
 
+import { PRODUCT_NAME } from "./branding";
 import { el } from "./dom";
 import { STOCK_SOURCES, type StockSource } from "./sources";
 import { loadSettings, saveSettings, type Settings } from "./storage";
@@ -56,7 +57,7 @@ function render(settings: Settings, message = ""): void {
   app.replaceChildren(
     el("div", { class: "shell" }, [
       el("header", { class: "brand" }, [
-        el("div", {}, [el("p", { class: "eyebrow" }, ["Adanos Sentiment Lens"]), el("h1", {}, ["Settings"])]),
+        el("div", {}, [el("p", { class: "eyebrow" }, [PRODUCT_NAME]), el("h1", {}, ["Settings"])]),
       ]),
       el("section", { class: "card stack" }, [
         el("label", { class: "label" }, ["Adanos API key"]),
@@ -80,4 +81,3 @@ function render(settings: Settings, message = ""): void {
 }
 
 void loadSettings().then((settings) => render(settings));
-

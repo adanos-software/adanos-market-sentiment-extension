@@ -1,6 +1,7 @@
 import "./styles.css";
 
 import { compareSentiment, type SentimentRecord } from "./api";
+import { PRODUCT_NAME } from "./branding";
 import { el, formatNumber, sentimentTone } from "./dom";
 import { STOCK_SOURCES, type StockSource } from "./sources";
 import { clearContextTicker, loadContextTicker, loadSettings, saveSettings, type Settings } from "./storage";
@@ -110,7 +111,7 @@ function render(state: State): void {
   app.replaceChildren(
     el("div", { class: "shell" }, [
       el("header", { class: "brand" }, [
-        el("div", {}, [el("p", { class: "eyebrow" }, ["Real-time market sentiment API"]), el("h1", {}, ["Adanos Sentiment Lens"])]),
+        el("div", {}, [el("p", { class: "eyebrow" }, ["Real-time market sentiment API"]), el("h1", {}, [PRODUCT_NAME])]),
       ]),
       state.settings.apiKey
         ? el("p", { class: "muted" }, ["Check stock sentiment across News, Reddit, X, and Polymarket with one Adanos API key."])

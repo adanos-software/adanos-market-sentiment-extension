@@ -1,7 +1,9 @@
 import { DEFAULT_SOURCE, isStockSource, type StockSource } from "./sources";
 
-const STORAGE_KEY = "adanos.sentimentLens.settings";
-const CONTEXT_TICKER_KEY = "adanos.sentimentLens.contextTicker";
+const LEGACY_CONTEXT_TICKER_KEY = "adanos.sentimentLens.contextTicker";
+const LEGACY_STORAGE_KEY = "adanos.sentimentLens.settings";
+const CONTEXT_TICKER_KEY = "adanos.marketSentiment.contextTicker";
+const STORAGE_KEY = "adanos.marketSentiment.settings";
 
 export type Settings = {
   apiKey: string;
@@ -47,8 +49,15 @@ function sanitizeSettings(value: unknown): Settings {
 }
 
 export async function loadSettings(): Promise<Settings> {
-  const result = await storageArea().get(STORAGE_KEY);
-  return sanitizeSettings(result[STORAGE_KEY]);
+  const result = await storageArea().get([STORAGE_KEY, LEGACY_STORAGE_KEY]);
+  const settings = sanitizeSettings(result[STORAGE_KEY] ?? result[LEGACY_STORAGE_KEY]);
+
+  if (!result[STORAGE_KEY] && result[LEGACY_STORAGE_KEY]) {
+    await saveSettings(settings);
+    await storageArea().remove(LEGACY_STORAGE_KEY);
+  }
+
+  return settings;
 }
 
 export async function saveSettings(settings: Settings): Promise<void> {
@@ -56,14 +65,15 @@ export async function saveSettings(settings: Settings): Promise<void> {
 }
 
 export async function loadContextTicker(): Promise<string | null> {
-  const result = await chrome.storage.local.get(CONTEXT_TICKER_KEY);
-  return typeof result[CONTEXT_TICKER_KEY] === "string" ? result[CONTEXT_TICKER_KEY] : null;
+  const result = await storageArea().get([CONTEXT_TICKER_KEY, LEGACY_CONTEXT_TICKER_KEY]);
+  const ticker = result[CONTEXT_TICKER_KEY] ?? result[LEGACY_CONTEXT_TICKER_KEY];
+  return typeof ticker === "string" ? ticker : null;
 }
 
 export async function saveContextTicker(ticker: string): Promise<void> {
-  await chrome.storage.local.set({ [CONTEXT_TICKER_KEY]: ticker });
+  await storageArea().set({ [CONTEXT_TICKER_KEY]: ticker });
 }
 
 export async function clearContextTicker(): Promise<void> {
-  await chrome.storage.local.remove(CONTEXT_TICKER_KEY);
+  await storageArea().remove([CONTEXT_TICKER_KEY, LEGACY_CONTEXT_TICKER_KEY]);
 }

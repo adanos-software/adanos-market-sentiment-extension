@@ -1,6 +1,6 @@
-# Adanos Sentiment Lens
+# Adanos Market Sentiment
 
-Adanos Sentiment Lens is a Chrome Extension for stock market research. It shows
+Adanos Market Sentiment is a Chrome Extension for stock market research. It shows
 market sentiment for selected stock tickers from the Adanos Market Sentiment API.
 
 ## Features
@@ -47,5 +47,5 @@ ship analytics, and does not execute remotely hosted JavaScript.
 
 ## Disclaimer
 
-Adanos Sentiment Lens provides market sentiment data for research purposes only.
+Adanos Market Sentiment provides market sentiment data for research purposes only.
 It is not financial advice.

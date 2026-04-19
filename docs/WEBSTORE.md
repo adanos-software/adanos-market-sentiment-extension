@@ -2,7 +2,7 @@
 
 ## Listing
 
-Name: Adanos Sentiment Lens
+Name: Adanos Market Sentiment
 
 Short description:
 
@@ -14,7 +14,7 @@ Single purpose:
 
 ## Long Description Draft
 
-Adanos Sentiment Lens helps investors, analysts, and market researchers check
+Adanos Market Sentiment helps investors, analysts, and market researchers check
 stock sentiment directly from Chrome.
 
 Highlight a ticker such as `NVDA`, `TSLA`, or `$AAPL`, right-click, and choose

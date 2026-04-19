@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Adanos Sentiment Lens",
-  "short_name": "Adanos Lens",
+  "name": "Adanos Market Sentiment",
+  "short_name": "Adanos MS",
   "version": "0.1.0",
   "description": "Check stock market sentiment from News, Reddit, X, and Polymarket for selected tickers.",
   "homepage_url": "https://adanos.org",
@@ -16,7 +16,7 @@
       "16": "icons/icon-16.png",
       "32": "icons/icon-32.png"
     },
-    "default_title": "Adanos Sentiment Lens",
+    "default_title": "Adanos Market Sentiment",
     "default_popup": "popup.html"
   },
   "background": {
