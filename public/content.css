@@ -188,13 +188,13 @@
 .adanos-ms-trendline {
   border-bottom: 1px solid #ebe7df;
   display: grid;
-  gap: 8px;
-  padding: 14px 18px 8px;
+  gap: 6px;
+  padding: 14px 20px 9px;
 }
 
 .adanos-ms-trendline svg {
   display: block;
-  height: 38px;
+  height: 58px;
   width: 100%;
 }
 

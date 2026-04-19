@@ -469,14 +469,14 @@ function trendSparkline(values: number[]): HTMLElement {
   label.textContent = "7-day trend";
 
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.setAttribute("viewBox", "0 0 260 44");
+  svg.setAttribute("viewBox", "0 0 356 58");
   svg.setAttribute("aria-hidden", "true");
 
   const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
   path.setAttribute("d", sparklinePath(values));
   path.setAttribute("fill", "none");
-  path.setAttribute("stroke", "#999");
-  path.setAttribute("stroke-width", "1.4");
+  path.setAttribute("stroke", "#9b9b9b");
+  path.setAttribute("stroke-width", "1.2");
   path.setAttribute("stroke-linecap", "round");
   path.setAttribute("stroke-linejoin", "round");
   svg.append(path);
@@ -486,15 +486,15 @@ function trendSparkline(values: number[]): HTMLElement {
 }
 
 function sparklinePath(values: number[]): string {
-  const normalized = values.length >= 2 ? values.slice(-7) : [42, 50, 45, 62, 48, 49, 47];
+  const normalized = values.length >= 2 ? values.slice(-7) : [41, 46, 43, 54, 42, 42.5, 41.8];
   const min = Math.min(...normalized);
   const max = Math.max(...normalized);
   const range = max - min || 1;
 
   return normalized
     .map((value, index) => {
-      const x = (index / (normalized.length - 1)) * 250 + 5;
-      const y = 36 - ((value - min) / range) * 28;
+      const x = (index / (normalized.length - 1)) * 334 + 11;
+      const y = 48 - ((value - min) / range) * 34;
       return `${index === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`;
     })
     .join(" ");
