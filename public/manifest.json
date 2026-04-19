@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Adanos Sentiment Lens",
+  "short_name": "Adanos Lens",
+  "version": "0.1.0",
+  "description": "Check stock market sentiment from News, Reddit, X, and Polymarket for selected tickers.",
+  "homepage_url": "https://adanos.org",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    },
+    "default_title": "Adanos Sentiment Lens",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "options_page": "options.html",
+  "permissions": ["storage", "contextMenus"],
+  "host_permissions": ["https://api.adanos.org/*"]
+}

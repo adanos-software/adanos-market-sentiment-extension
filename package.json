@@ -1,0 +1,21 @@
+{
+  "name": "adanos-sentiment-lens",
+  "version": "0.1.0",
+  "description": "Chrome extension for stock market sentiment from the Adanos Market Sentiment API.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dist:zip": "rm -f adanos-sentiment-lens.zip && pnpm build && cd dist && zip -r ../adanos-sentiment-lens.zip .",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "verify": "pnpm typecheck && pnpm test && pnpm build"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.308",
+    "@types/node": "^25.6.0",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.7",
+    "vitest": "^2.1.8"
+  }
+}
