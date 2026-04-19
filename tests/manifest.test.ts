@@ -52,4 +52,14 @@ describe("Chrome Web Store scope", () => {
     expect(contentScript).not.toMatch(/^import\s/m);
     expect(contentScript).not.toMatch(/^export\s/m);
   });
+
+  it("keeps the hover card branded and source-switchable", () => {
+    const contentScript = readFileSync(resolve("src/content.ts"), "utf8");
+    const contentStyles = readFileSync(resolve("public/content.css"), "utf8");
+
+    expect(contentScript).toContain("function sourceSwitcher");
+    expect(contentStyles).toContain(".adanos-ms-source-switcher");
+    expect(contentStyles).toContain(".adanos-ms-trend.falling");
+    expect(contentStyles).not.toContain('content: "●  ●  ●"');
+  });
 });

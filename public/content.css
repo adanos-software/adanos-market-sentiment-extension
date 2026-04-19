@@ -6,41 +6,33 @@
 
 .adanos-ms-tooltip {
   background:
-    linear-gradient(180deg, #161b22 0 34px, transparent 34px),
-    #0d1117;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+    linear-gradient(180deg, rgba(248, 247, 244, 0) 0%, rgba(240, 239, 236, 0.72) 100%),
+    repeating-linear-gradient(to right, rgba(0, 0, 0, 0.035) 0 1px, transparent 1px 56px),
+    repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.035) 0 1px, transparent 1px 56px),
+    #f8f7f4;
+  border: 1px solid #ebe7df;
   border-radius: 16px;
   box-shadow:
-    0 18px 40px rgba(0, 0, 0, 0.22),
-    0 2px 10px rgba(0, 0, 0, 0.1);
+    0 18px 44px rgba(0, 0, 0, 0.16),
+    0 2px 10px rgba(0, 0, 0, 0.08);
   box-sizing: border-box;
-  color: #f8fafc;
+  color: #1a1a1a;
   display: none;
   font-family:
     "Space Grotesk", "Space Grotesk Fallback", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
   left: 0;
-  max-width: 280px;
-  min-width: 260px;
-  padding: 48px 14px 14px;
+  max-width: 320px;
+  min-width: 292px;
+  padding: 16px;
   position: absolute;
   top: 0;
   z-index: 2147483647;
 }
 
-.adanos-ms-tooltip::before {
-  color: #6b7280;
-  content: "●  ●  ●";
-  font-size: 11px;
-  left: 14px;
-  letter-spacing: 4px;
-  position: absolute;
-  top: 12px;
-}
-
 .adanos-ms-tooltip.visible {
   display: grid;
-  gap: 10px;
+  gap: 12px;
 }
 
 .adanos-ms-tooltip-head {
@@ -52,32 +44,50 @@
 
 .adanos-ms-tooltip-head div {
   display: grid;
-  gap: 2px;
+  gap: 3px;
   min-width: 0;
 }
 
 .adanos-ms-tooltip-head strong {
-  color: #f8fafc;
+  color: #1a1a1a;
   font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
-  font-size: 18px;
-  letter-spacing: -0.02em;
+  font-size: 20px;
+  letter-spacing: -0.03em;
   line-height: 1;
 }
 
 .adanos-ms-tooltip-head span {
-  color: #abb2bf;
+  color: #444;
   font-size: 12px;
   line-height: 1.35;
 }
 
+.adanos-ms-source-switcher {
+  display: grid;
+  gap: 6px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .adanos-ms-source {
-  background: #dde8ff;
-  border-radius: 999px;
-  color: #215bd8 !important;
-  flex: 0 0 auto;
-  font-size: 11px !important;
+  appearance: none;
+  background: rgba(252, 251, 248, 0.88);
+  border: 1px solid #d8d2c8;
+  border-radius: 8px;
+  color: #444;
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
   font-weight: 700;
-  padding: 5px 8px;
+  line-height: 1;
+  min-width: 0;
+  padding: 8px 6px;
+  text-align: center;
+}
+
+.adanos-ms-source.active {
+  background: #1a1a1a;
+  border-color: #1a1a1a;
+  color: #fff;
 }
 
 .adanos-ms-metrics {
@@ -87,25 +97,27 @@
 }
 
 .adanos-ms-metric {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(252, 251, 248, 0.92);
+  border: 1px solid #ebe7df;
   border-radius: 12px;
   display: grid;
-  gap: 4px;
-  padding: 9px;
+  gap: 5px;
+  padding: 10px;
 }
 
 .adanos-ms-metric-label {
-  color: #6b7280;
+  color: #7f786f;
   font-size: 10px;
   letter-spacing: 0.08em;
+  line-height: 1;
   text-transform: uppercase;
 }
 
 .adanos-ms-metric-value {
-  color: #e5e7eb;
-  font-size: 18px;
+  color: #1a1a1a;
+  font-size: 20px;
   font-weight: 800;
+  letter-spacing: -0.02em;
   line-height: 1;
 }
 
@@ -128,13 +140,68 @@
   line-height: 1.45;
 }
 
-.adanos-ms-body,
-.adanos-ms-trend {
-  color: #abb2bf;
+.adanos-ms-body {
+  color: #444;
   margin: 0;
 }
 
+.adanos-ms-trend {
+  align-items: center;
+  border: 1px solid #d8d2c8;
+  border-radius: 999px;
+  color: #444;
+  display: inline-flex;
+  font-weight: 700;
+  justify-self: start;
+  margin: 0;
+  padding: 5px 9px;
+  text-transform: capitalize;
+}
+
+.adanos-ms-trend::before {
+  border-radius: 999px;
+  content: "";
+  height: 7px;
+  margin-right: 7px;
+  width: 7px;
+}
+
+.adanos-ms-trend.rising {
+  background: #edf7ed;
+  border-color: #c8e6c9;
+  color: #2e7d32;
+}
+
+.adanos-ms-trend.rising::before {
+  background: #2e7d32;
+}
+
+.adanos-ms-trend.falling {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #c62828;
+}
+
+.adanos-ms-trend.falling::before {
+  background: #c62828;
+}
+
+.adanos-ms-trend.stable {
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #d97706;
+}
+
+.adanos-ms-trend.stable::before {
+  background: #d97706;
+}
+
+.adanos-ms-trend.unknown::before {
+  background: #7f786f;
+}
+
 .adanos-ms-footer {
-  color: #dde8ff;
+  color: #1a1a1a;
+  font-weight: 700;
   text-decoration: none;
 }

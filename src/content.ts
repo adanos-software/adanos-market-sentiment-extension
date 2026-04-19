@@ -42,6 +42,8 @@ const STOCK_SOURCES = {
 
 type StockSource = keyof typeof STOCK_SOURCES;
 
+const STOCK_SOURCE_KEYS = Object.keys(STOCK_SOURCES) as StockSource[];
+
 type Settings = {
   apiKey: string;
   days: number;
@@ -86,6 +88,7 @@ type TickerMention = {
 
 type TooltipState = {
   pointerX: number;
+  source: StockSource;
   pointerY: number;
   ticker: string;
 };
@@ -268,6 +271,13 @@ function sentimentClass(value: number | null): string {
   return "neutral";
 }
 
+function trendClass(trend: string | null): string {
+  if (trend === "rising") return "rising";
+  if (trend === "falling") return "falling";
+  if (trend === "stable") return "stable";
+  return "unknown";
+}
+
 function ensureTooltip(): HTMLElement {
   if (tooltip) return tooltip;
   tooltip = document.createElement("aside");
@@ -306,7 +316,7 @@ function renderLoading(ticker: string, source: StockSource): void {
   const card = ensureTooltip();
   card.replaceChildren();
   card.classList.add("visible");
-  card.append(tooltipHeader(ticker, source), tooltipBodyText("Loading Adanos sentiment..."));
+  card.append(tooltipHeader(ticker), sourceSwitcher(ticker, source), tooltipBodyText("Loading Adanos sentiment..."));
 }
 
 function renderMissingKey(ticker: string, source: StockSource): void {
@@ -314,7 +324,8 @@ function renderMissingKey(ticker: string, source: StockSource): void {
   card.replaceChildren();
   card.classList.add("visible");
   card.append(
-    tooltipHeader(ticker, source),
+    tooltipHeader(ticker),
+    sourceSwitcher(ticker, source),
     tooltipBodyText("Add your Adanos API key in the extension popup to enable ticker hover sentiment."),
     tooltipFooter(),
   );
@@ -324,7 +335,7 @@ function renderError(ticker: string, source: StockSource, message: string): void
   const card = ensureTooltip();
   card.replaceChildren();
   card.classList.add("visible");
-  card.append(tooltipHeader(ticker, source), tooltipBodyText(message), tooltipFooter());
+  card.append(tooltipHeader(ticker), sourceSwitcher(ticker, source), tooltipBodyText(message), tooltipFooter());
 }
 
 function renderSentiment(record: SentimentRecord, source: StockSource): void {
@@ -341,10 +352,16 @@ function renderSentiment(record: SentimentRecord, source: StockSource): void {
 
   card.replaceChildren();
   card.classList.add("visible");
-  card.append(tooltipHeader(record.ticker, source, record.companyName), metrics, tooltipTrend(record.trend), tooltipFooter());
+  card.append(
+    tooltipHeader(record.ticker, record.companyName),
+    sourceSwitcher(record.ticker, source),
+    metrics,
+    tooltipTrend(record.trend),
+    tooltipFooter(),
+  );
 }
 
-function tooltipHeader(ticker: string, source: StockSource, companyName?: string | null): HTMLElement {
+function tooltipHeader(ticker: string, companyName?: string | null): HTMLElement {
   const header = document.createElement("header");
   header.className = "adanos-ms-tooltip-head";
 
@@ -355,12 +372,29 @@ function tooltipHeader(ticker: string, source: StockSource, companyName?: string
   subtitle.textContent = companyName || PRODUCT_NAME;
   copy.append(title, subtitle);
 
-  const pill = document.createElement("span");
-  pill.className = "adanos-ms-source";
-  pill.textContent = STOCK_SOURCES[source].label;
-
-  header.append(copy, pill);
+  header.append(copy);
   return header;
+}
+
+function sourceSwitcher(ticker: string, activeSource: StockSource): HTMLElement {
+  const switcher = document.createElement("div");
+  switcher.className = "adanos-ms-source-switcher";
+  switcher.setAttribute("aria-label", "Sentiment source");
+
+  for (const source of STOCK_SOURCE_KEYS) {
+    const button = document.createElement("button");
+    button.className = `adanos-ms-source ${source === activeSource ? "active" : ""}`;
+    button.type = "button";
+    button.textContent = STOCK_SOURCES[source].label;
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      void loadSource(ticker, source);
+    });
+    switcher.append(button);
+  }
+
+  return switcher;
 }
 
 function tooltipBodyText(text: string): HTMLElement {
@@ -372,7 +406,7 @@ function tooltipBodyText(text: string): HTMLElement {
 
 function tooltipTrend(trend: string | null): HTMLElement {
   const trendNode = document.createElement("p");
-  trendNode.className = "adanos-ms-trend";
+  trendNode.className = `adanos-ms-trend ${trendClass(trend)}`;
   trendNode.textContent = `Trend: ${trend ?? "n/a"}`;
   return trendNode;
 }
@@ -403,30 +437,38 @@ function fetchTicker(settings: Settings, ticker: string): Promise<SentimentRecor
   return request;
 }
 
-async function showTooltip(ticker: string, pointerX: number, pointerY: number): Promise<void> {
-  const settings = await getSettings();
-  activeState = { pointerX, pointerY, ticker };
-  moveTooltip(activeState);
+async function loadSource(ticker: string, source: StockSource): Promise<void> {
+  const baseSettings = await getSettings();
+  const settings = { ...baseSettings, source };
+
+  if (activeState) activeState.source = source;
 
   if (!settings.apiKey) {
-    renderMissingKey(ticker, settings.source);
+    renderMissingKey(ticker, source);
     return;
   }
 
-  renderLoading(ticker, settings.source);
+  renderLoading(ticker, source);
 
   try {
     const record = await fetchTicker(settings, ticker);
-    if (!activeState || activeState.ticker !== ticker) return;
+    if (!activeState || activeState.ticker !== ticker || activeState.source !== source) return;
     if (!record) {
-      renderError(ticker, settings.source, "No sentiment data found for this ticker.");
+      renderError(ticker, source, "No sentiment data found for this ticker.");
       return;
     }
-    renderSentiment(record, settings.source);
+    renderSentiment(record, source);
   } catch (error) {
-    if (!activeState || activeState.ticker !== ticker) return;
-    renderError(ticker, settings.source, error instanceof Error ? error.message : "Unable to load sentiment.");
+    if (!activeState || activeState.ticker !== ticker || activeState.source !== source) return;
+    renderError(ticker, source, error instanceof Error ? error.message : "Unable to load sentiment.");
   }
+}
+
+async function showTooltip(ticker: string, pointerX: number, pointerY: number): Promise<void> {
+  const settings = await getSettings();
+  activeState = { pointerX, pointerY, source: settings.source, ticker };
+  moveTooltip(activeState);
+  await loadSource(ticker, settings.source);
 }
 
 function wrapTextNode(textNode: Text, remaining: { count: number }): void {
