@@ -53,10 +53,12 @@ describe("Chrome Web Store scope", () => {
     expect(contentScript).not.toMatch(/^export\s/m);
   });
 
-  it("keeps the hover card branded and source-switchable", () => {
+  it("keeps the ticker card branded and source-switchable", () => {
     const contentScript = readFileSync(resolve("src/content.ts"), "utf8");
     const contentStyles = readFileSync(resolve("public/content.css"), "utf8");
 
+    expect(contentScript).toContain('tickerNode.addEventListener("click"');
+    expect(contentScript).not.toContain('tickerNode.addEventListener("mouseenter"');
     expect(contentScript).toContain("function sourceSwitcher");
     expect(contentStyles).toContain(".adanos-ms-source-switcher");
     expect(contentStyles).toContain(".adanos-ms-trendline");

@@ -4,9 +4,15 @@
   background-repeat: no-repeat;
   background-size: 100% 1px;
   border-bottom: 0;
-  cursor: help;
+  cursor: pointer;
   text-decoration: none;
   text-underline-offset: 0;
+}
+
+.adanos-ms-ticker:focus-visible {
+  border-radius: 2px;
+  outline: 2px solid rgba(46, 125, 50, 0.45);
+  outline-offset: 2px;
 }
 
 .adanos-ms-tooltip {

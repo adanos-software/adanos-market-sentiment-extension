@@ -19,7 +19,7 @@ stock ticker symbols. Page contents are not sent to Adanos.
 
 ## Data Sent to Adanos
 
-When the user requests a sentiment lookup or hovers a detected ticker, the
+When the user requests a sentiment lookup or clicks a detected ticker, the
 extension sends:
 
 - The selected stock ticker symbols

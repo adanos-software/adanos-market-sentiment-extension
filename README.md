@@ -6,7 +6,7 @@ market sentiment for selected stock tickers from the Adanos Market Sentiment API
 ## Features
 
 - Check highlighted stock tickers from the browser context menu.
-- Detect likely stock tickers on webpages and show a hover sentiment card.
+- Detect likely stock tickers on webpages and show a sentiment card after click.
 - Compare up to 10 stock tickers from the popup.
 - Show source-specific activity metrics for each sentiment source.
 - Choose one of four stock sentiment sources:

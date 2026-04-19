@@ -19,7 +19,7 @@ stock sentiment directly from Chrome.
 
 Highlight a ticker such as `NVDA`, `TSLA`, or `$AAPL`, right-click, and choose
 `Check Adanos sentiment`. The extension can also detect likely stock tickers on
-webpages and show a Stock Sentiment Card-style hover preview. You can open the
+webpages and show a Stock Sentiment Card-style preview after click. You can open the
 extension popup and compare a watchlist of up to 10 stock tickers.
 
 Supported sentiment sources:
@@ -54,7 +54,7 @@ only. It is not financial advice.
 - `contextMenus`: adds the right-click ticker lookup action for selected text.
 - `https://api.adanos.org/*`: calls the Adanos Market Sentiment API.
 - `http://*/*` and `https://*/*` content script access: detects likely ticker
-  symbols locally on webpages so the hover sentiment card can be shown.
+  symbols locally on webpages so the click-to-open sentiment card can be shown.
 
 ## Review Guardrails
 
@@ -64,5 +64,5 @@ only. It is not financial advice.
 - No browsing-history permission.
 - No broad API host permission beyond `https://api.adanos.org/*`.
 - No ad injection.
-- No page-content collection; ticker detection runs locally and only hovered
+- No page-content collection; ticker detection runs locally and only clicked
   ticker symbols are sent to the API.

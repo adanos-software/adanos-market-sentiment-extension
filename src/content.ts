@@ -6,7 +6,6 @@ const PRODUCT_NAME = "Adanos Market Sentiment";
 const SETTINGS_KEYS = ["adanos.marketSentiment.settings", "adanos.sentimentLens.settings"];
 const DEFAULT_SOURCE: StockSource = "reddit";
 const SKIP_SELECTOR = [
-  "a",
   "button",
   "code",
   "input",
@@ -367,7 +366,7 @@ function renderMissingKey(ticker: string, source: StockSource): void {
   card.append(
     tooltipHeader(ticker),
     sourceSwitcher(ticker, source),
-    tooltipBodyText("Add your Adanos API key in the extension popup to enable ticker hover sentiment."),
+    tooltipBodyText("Add your Adanos API key in the extension popup to enable click-to-open ticker sentiment."),
     tooltipFooter(),
   );
 }
@@ -536,6 +535,14 @@ function hideTooltip(): void {
   tooltip?.classList.remove("visible");
 }
 
+function hideTooltipOnOutsideClick(event: MouseEvent): void {
+  const target = event.target;
+  if (!(target instanceof Node)) return;
+  if (tooltip?.contains(target)) return;
+  if ((target as Element).closest?.(".adanos-ms-ticker")) return;
+  hideTooltip();
+}
+
 function fetchTicker(settings: Settings, ticker: string): Promise<SentimentRecord | null> {
   const cacheKey = `${settings.source}:${settings.days}:${ticker}`;
   const cached = resultCache.get(cacheKey);
@@ -596,17 +603,20 @@ function wrapTextNode(textNode: Text, remaining: { count: number }): void {
     const tickerNode = document.createElement("span");
     tickerNode.className = "adanos-ms-ticker";
     tickerNode.dataset.ticker = mention.ticker;
+    tickerNode.tabIndex = 0;
+    tickerNode.title = `Click for ${mention.ticker} sentiment`;
     tickerNode.textContent = text.slice(mention.start, mention.end);
-    tickerNode.addEventListener("mouseenter", (event) => {
+    tickerNode.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
       void showTooltip(mention.ticker, event.clientX, event.clientY);
     });
-    tickerNode.addEventListener("mousemove", (event) => {
-      if (!activeState) return;
-      activeState.pointerX = event.clientX;
-      activeState.pointerY = event.clientY;
-      moveTooltip(activeState);
+    tickerNode.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      const rect = tickerNode.getBoundingClientRect();
+      void showTooltip(mention.ticker, rect.left, rect.bottom);
     });
-    tickerNode.addEventListener("mouseleave", hideTooltip);
     fragment.append(tickerNode);
 
     cursor = mention.end;
@@ -660,3 +670,8 @@ if (document.body) {
     if (mutations.some((mutation) => mutation.addedNodes.length > 0)) scheduleScan();
   }).observe(document.body, { childList: true, subtree: true });
 }
+
+document.addEventListener("click", hideTooltipOnOutsideClick, true);
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") hideTooltip();
+});
