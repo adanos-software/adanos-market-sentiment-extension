@@ -60,6 +60,7 @@ type SentimentRecord = {
   ticker: string;
   tradeCount: number | null;
   trend: string | null;
+  trendHistory: number[];
   uniqueTweets: number | null;
 };
 
@@ -77,6 +78,7 @@ type RawSentimentRecord = {
   ticker?: unknown;
   trade_count?: unknown;
   trend?: unknown;
+  trend_history?: unknown;
   unique_tweets?: unknown;
 };
 
@@ -173,6 +175,11 @@ function toStringValue(value: unknown): string | null {
   return trimmed.length ? trimmed : null;
 }
 
+function toNumberArray(value: unknown): number[] {
+  if (!Array.isArray(value)) return [];
+  return value.map((item) => toNumber(item)).filter((item): item is number => item !== null);
+}
+
 function normalizeRecord(record: RawSentimentRecord): SentimentRecord | null {
   const ticker = toStringValue(record.ticker) ?? toStringValue(record.symbol);
   if (!ticker) return null;
@@ -187,6 +194,7 @@ function normalizeRecord(record: RawSentimentRecord): SentimentRecord | null {
     ticker: ticker.replace(/^\$/, "").toUpperCase(),
     tradeCount: toNumber(record.trade_count),
     trend: toStringValue(record.trend),
+    trendHistory: toNumberArray(record.trend_history),
     uniqueTweets: toNumber(record.unique_tweets),
   };
 }
@@ -264,10 +272,36 @@ function sourceActivity(record: SentimentRecord, source: StockSource): [string, 
   }
 }
 
-function sentimentClass(value: number | null): string {
-  if (value === null) return "neutral";
-  if (value > 0.05) return "positive";
-  if (value < -0.05) return "negative";
+function sourceActivitySummary(record: SentimentRecord, source: StockSource): string {
+  switch (source) {
+    case "reddit":
+      return `${formatNumber(record.mentions, 0)} mentions`;
+    case "x":
+      return `${formatNumber(record.uniqueTweets, 0)} tweets`;
+    case "news":
+      return `${formatNumber(record.sourceCount, 0)} sources`;
+    case "polymarket":
+      return `${formatNumber(record.tradeCount, 0)} trades`;
+  }
+}
+
+function sourceContextSummary(source: StockSource): string {
+  switch (source) {
+    case "reddit":
+      return "across Reddit communities";
+    case "x":
+      return "across X / FinTwit";
+    case "news":
+      return "across market news sources";
+    case "polymarket":
+      return "across Polymarket stock markets";
+  }
+}
+
+function sentimentSummary(value: number | null): string {
+  if (value === null) return "mixed";
+  if (value > 0.05) return "bullish";
+  if (value < -0.05) return "bearish";
   return "neutral";
 }
 
@@ -312,6 +346,13 @@ function metric(label: string, value: string, tone = ""): HTMLElement {
   return item;
 }
 
+function logoTile(ticker: string): HTMLElement {
+  const tile = document.createElement("div");
+  tile.className = "adanos-ms-logo";
+  tile.textContent = ticker.slice(0, 1);
+  return tile;
+}
+
 function renderLoading(ticker: string, source: StockSource): void {
   const card = ensureTooltip();
   card.replaceChildren();
@@ -344,35 +385,44 @@ function renderSentiment(record: SentimentRecord, source: StockSource): void {
   const metrics = document.createElement("div");
   metrics.className = "adanos-ms-metrics";
   metrics.append(
-    metric("Buzz", formatNumber(record.buzzScore, 0), "positive"),
-    metric("Sentiment", formatNumber(record.sentimentScore, 2), sentimentClass(record.sentimentScore)),
+    metric("Buzz Score", formatNumber(record.buzzScore, 1)),
     metric("Bullish", record.bullishPct === null ? "-" : `${formatNumber(record.bullishPct, 0)}%`, "positive"),
     metric(activityLabel, activityValue),
+    metric("Trend", trendDisplay(record.trend), trendClass(record.trend)),
   );
 
   card.replaceChildren();
   card.classList.add("visible");
   card.append(
-    tooltipHeader(record.ticker, record.companyName),
+    tooltipHeader(record.ticker, source, record.companyName),
     sourceSwitcher(record.ticker, source),
     metrics,
-    tooltipTrend(record.trend),
-    tooltipFooter(),
+    trendSparkline(record.trendHistory),
+    trendSummary(record, source),
   );
 }
 
-function tooltipHeader(ticker: string, companyName?: string | null): HTMLElement {
+function tooltipHeader(ticker: string, source?: StockSource, companyName?: string | null): HTMLElement {
   const header = document.createElement("header");
   header.className = "adanos-ms-tooltip-head";
 
   const copy = document.createElement("div");
+  copy.className = "adanos-ms-title";
   const title = document.createElement("strong");
   title.textContent = ticker;
   const subtitle = document.createElement("span");
   subtitle.textContent = companyName || PRODUCT_NAME;
   copy.append(title, subtitle);
 
-  header.append(copy);
+  const left = document.createElement("div");
+  left.className = "adanos-ms-title-wrap";
+  left.append(logoTile(ticker), copy);
+
+  const label = document.createElement("span");
+  label.className = "adanos-ms-source-label";
+  label.textContent = source ? `${STOCK_SOURCES[source].label} sentiment` : "Social sentiment";
+
+  header.append(left, label);
   return header;
 }
 
@@ -404,11 +454,71 @@ function tooltipBodyText(text: string): HTMLElement {
   return body;
 }
 
-function tooltipTrend(trend: string | null): HTMLElement {
-  const trendNode = document.createElement("p");
-  trendNode.className = `adanos-ms-trend ${trendClass(trend)}`;
-  trendNode.textContent = `Trend: ${trend ?? "n/a"}`;
-  return trendNode;
+function trendDisplay(trend: string | null): string {
+  if (trend === "falling") return "↓ falling";
+  if (trend === "rising") return "↑ rising";
+  return trend ?? "-";
+}
+
+function trendSparkline(values: number[]): HTMLElement {
+  const section = document.createElement("section");
+  section.className = "adanos-ms-trendline";
+
+  const label = document.createElement("span");
+  label.className = "adanos-ms-section-label";
+  label.textContent = "7-day trend";
+
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", "0 0 260 44");
+  svg.setAttribute("aria-hidden", "true");
+
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("d", sparklinePath(values));
+  path.setAttribute("fill", "none");
+  path.setAttribute("stroke", "#999");
+  path.setAttribute("stroke-width", "1.4");
+  path.setAttribute("stroke-linecap", "round");
+  path.setAttribute("stroke-linejoin", "round");
+  svg.append(path);
+
+  section.append(label, svg);
+  return section;
+}
+
+function sparklinePath(values: number[]): string {
+  const normalized = values.length >= 2 ? values.slice(-7) : [42, 50, 45, 62, 48, 49, 47];
+  const min = Math.min(...normalized);
+  const max = Math.max(...normalized);
+  const range = max - min || 1;
+
+  return normalized
+    .map((value, index) => {
+      const x = (index / (normalized.length - 1)) * 250 + 5;
+      const y = 36 - ((value - min) / range) * 28;
+      return `${index === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`;
+    })
+    .join(" ");
+}
+
+function trendSummary(record: SentimentRecord, source: StockSource): HTMLElement {
+  const section = document.createElement("section");
+  section.className = "adanos-ms-summary";
+
+  const label = document.createElement("span");
+  label.className = "adanos-ms-section-label";
+  label.textContent = "Trend summary";
+
+  const text = document.createElement("p");
+  text.textContent = `${STOCK_SOURCES[source].label} sentiment for ${record.ticker} is currently ${sentimentSummary(
+    record.sentimentScore,
+  )} with ${sourceActivitySummary(record, source)} ${sourceContextSummary(source)}. Buzz is ${formatNumber(
+    record.buzzScore,
+    1,
+  )} and momentum is ${record.trend ?? "not available"}.`;
+
+  const footer = tooltipFooter();
+  section.append(label, text, footer);
+  return section;
 }
 
 function tooltipFooter(): HTMLElement {

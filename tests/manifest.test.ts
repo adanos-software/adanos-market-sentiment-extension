@@ -59,7 +59,9 @@ describe("Chrome Web Store scope", () => {
 
     expect(contentScript).toContain("function sourceSwitcher");
     expect(contentStyles).toContain(".adanos-ms-source-switcher");
-    expect(contentStyles).toContain(".adanos-ms-trend.falling");
+    expect(contentStyles).toContain(".adanos-ms-trendline");
+    expect(contentStyles).toContain(".adanos-ms-summary");
+    expect(contentStyles).toContain(".adanos-ms-metric-value.falling");
     expect(contentStyles).not.toContain('content: "●  ●  ●"');
   });
 });
