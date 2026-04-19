@@ -1,3 +1,9 @@
+(() => {
+if (document.documentElement.dataset.adanosMarketSentimentLoaded === "true") {
+  return;
+}
+document.documentElement.dataset.adanosMarketSentimentLoaded = "true";
+
 const API_BASE_URL = "https://api.adanos.org";
 const MAX_PAGE_TICKERS = 80;
 const MAX_TICKERS_PER_TEXT_NODE = 8;
@@ -675,3 +681,4 @@ document.addEventListener("click", hideTooltipOnOutsideClick, true);
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") hideTooltip();
 });
+})();

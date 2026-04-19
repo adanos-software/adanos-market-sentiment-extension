@@ -14,8 +14,9 @@ The extension stores the following data in Chrome local storage:
 
 ## Data Processed Locally
 
-The extension scans visible webpage text locally in the browser to detect likely
-stock ticker symbols. Page contents are not sent to Adanos.
+When the user enables ticker detection from the extension popup, the extension
+scans visible webpage text locally in the browser to detect likely stock ticker
+symbols on the current tab. Page contents are not sent to Adanos.
 
 ## Data Sent to Adanos
 

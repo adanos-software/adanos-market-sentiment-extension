@@ -13,7 +13,7 @@ describe("Chrome Web Store scope", () => {
         js: string[];
         matches: string[];
         run_at: string;
-      }>;
+      }> | undefined;
       host_permissions: string[];
       name: string;
       permissions: string[];
@@ -23,18 +23,20 @@ describe("Chrome Web Store scope", () => {
 
     expect(manifest.name).toBe("Adanos Market Sentiment");
     expect(manifest.short_name).toBe("Adanos MS");
-    expect(manifest.version).toBe("1.0.0");
-    expect(manifest.permissions).toEqual(["storage", "contextMenus"]);
+    expect(manifest.version).toBe("1.0.1");
+    expect(manifest.permissions).toEqual(["storage", "contextMenus", "activeTab", "scripting"]);
     expect(manifest.host_permissions).toEqual(["https://api.adanos.org/*"]);
-    expect(manifest.content_scripts).toEqual([
-      {
-        matches: ["http://*/*", "https://*/*"],
-        exclude_matches: ["https://api.adanos.org/*", "https://adanos.org/*"],
-        js: ["content.js"],
-        css: ["content.css"],
-        run_at: "document_idle",
-      },
-    ]);
+    expect(manifest.content_scripts).toBeUndefined();
+  });
+
+  it("injects page ticker detection only after explicit user action", () => {
+    const popupScript = readFileSync(resolve("src/popup.ts"), "utf8");
+
+    expect(popupScript).toContain('["content.css"]');
+    expect(popupScript).toContain('["content.js"]');
+    expect(popupScript).toContain("chrome.scripting.insertCSS");
+    expect(popupScript).toContain("chrome.scripting.executeScript");
+    expect(popupScript).toContain("Enable ticker detection on this page");
   });
 
   it("uses Reddit, X, News, Polymarket as the source order", () => {
@@ -53,6 +55,7 @@ describe("Chrome Web Store scope", () => {
 
     expect(contentScript).not.toMatch(/^import\s/m);
     expect(contentScript).not.toMatch(/^export\s/m);
+    expect(contentScript).toContain("adanosMarketSentimentLoaded");
   });
 
   it("keeps the ticker card branded and source-switchable", () => {

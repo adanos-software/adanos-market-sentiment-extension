@@ -9,6 +9,7 @@ import { MAX_COMPARE_TICKERS, parseTickerList } from "./tickers";
 
 type State = {
   error: string | null;
+  pageScanMessage: string | null;
   loading: boolean;
   results: SentimentRecord[];
   settings: Settings;
@@ -189,6 +190,37 @@ function footer(): HTMLElement {
   ]);
 }
 
+async function enablePageDetection(): Promise<string> {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab?.id) return "Open a webpage tab before enabling ticker detection.";
+  if (!tab.url || !/^https?:\/\//.test(tab.url)) return "Ticker detection can only be enabled on regular web pages.";
+  if (tab.url.startsWith("https://adanos.org/") || tab.url.startsWith("https://api.adanos.org/")) {
+    return "Ticker detection is disabled on Adanos pages.";
+  }
+
+  await chrome.scripting.insertCSS({ files: ["content.css"], target: { tabId: tab.id } });
+  await chrome.scripting.executeScript({ files: ["content.js"], target: { tabId: tab.id } });
+  return "Ticker detection enabled on this tab. Click a detected ticker to open sentiment.";
+}
+
+function pageDetectionCard(state: State, render: (next: State) => void): HTMLElement {
+  const button = el("button", { class: "button secondary full-width", type: "button" }, ["Enable ticker detection on this page"]);
+  button.addEventListener("click", async () => {
+    try {
+      render({ ...state, pageScanMessage: await enablePageDetection() });
+    } catch {
+      render({ ...state, pageScanMessage: "Chrome could not enable ticker detection on this page." });
+    }
+  });
+
+  return el("section", { class: "card stack" }, [
+    el("p", { class: "eyebrow" }, ["Page ticker detection"]),
+    el("p", { class: "muted" }, ["Runs only after this click. The current page is scanned locally for likely stock tickers."]),
+    button,
+    state.pageScanMessage ? el("div", { class: "notice" }, [state.pageScanMessage]) : el("div", { class: "hidden" }),
+  ]);
+}
+
 function render(state: State): void {
   if (!app) return;
 
@@ -207,6 +239,7 @@ function render(state: State): void {
             apiKeyForm(state, render),
           ]),
       sourceButtons(state, render),
+      pageDetectionCard(state, render),
       searchForm(state, render),
       state.error ? el("div", { class: "alert" }, [state.error]) : el("div", { class: "hidden" }),
       state.loading ? el("section", { class: "card muted" }, ["Loading Adanos sentiment..."]) : el("div", { class: "hidden" }),
@@ -289,6 +322,7 @@ async function boot(): Promise<void> {
   const tickerInput = contextTicker ?? settings.watchlist.join(", ");
   const state: State = {
     error: null,
+    pageScanMessage: null,
     loading: false,
     results: [],
     settings,

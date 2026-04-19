@@ -222,6 +222,11 @@
         width: 390px;
       }
 
+      .popup-demo {
+        transform: scale(0.86);
+        transform-origin: center;
+      }
+
       .popup-head {
         align-items: center;
         display: flex;
@@ -518,7 +523,7 @@
           <span class="badge">Polymarket</span>
         </div>
       </div>
-      <div class="popup">
+      <div class="popup popup-demo">
         <div class="popup-head">
           <img src="../../public/icons/icon-128.png" alt="" />
           <div>
@@ -533,6 +538,14 @@
           <div class="source-pill">News</div>
           <div class="source-pill">Polymarket</div>
         </div>
+        <div class="search-card">
+          <p class="eyebrow">Page ticker detection</p>
+          <p>Runs only after this click. The current page is scanned locally for likely stock tickers.</p>
+          <div class="button" style="background: #fcfbf8; border-color: #d8d2c8; color: #1a1a1a; text-align: center">
+            Enable ticker detection on this page
+          </div>
+        </div>
+        <div style="height: 14px"></div>
         <div class="search-card">
           <p class="eyebrow">Reddit</p>
           <p>Retail investor discussion across stock communities.</p>
@@ -574,7 +587,7 @@
               discussions while <span class="ticker-mark">AMD</span> gains momentum into earnings.
             </p>
             <p>
-              Click any detected ticker to open source-specific Adanos sentiment without sending page contents.
+              Enable detection from the popup, then click any detected ticker to open source-specific Adanos sentiment without sending page contents.
             </p>
           </div>
           <div class="sentiment-card large" style="position: absolute; right: 38px; top: 118px">
@@ -613,7 +626,7 @@
       <div>
         <p class="eyebrow">Ticker detection</p>
         <h1>Sentiment appears only when users click.</h1>
-        <p>Detected symbols stay subtle on the page. The card opens on click, supports keyboard access, and lets users switch sources inside the overlay.</p>
+        <p>Users enable detection from the popup first. Detected symbols stay subtle on the page, open on click, and support source switching inside the overlay.</p>
       </div>
     </section>
 

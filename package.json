@@ -1,12 +1,12 @@
 {
   "name": "adanos-market-sentiment",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Chrome extension for stock market sentiment from the Adanos Market Sentiment API.",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "dist:zip": "rm -f adanos-market-sentiment.zip && pnpm build && cd dist && zip -r ../adanos-market-sentiment.zip .",
+    "dist:zip": "rm -f adanos-market-sentiment.zip && pnpm build && find dist -name .DS_Store -delete && cd dist && zip -r ../adanos-market-sentiment.zip . -x '*.DS_Store' '__MACOSX/*'",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "verify": "pnpm typecheck && pnpm test && pnpm build"
