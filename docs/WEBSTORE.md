@@ -48,6 +48,16 @@ only. It is not financial advice.
 - Privacy policy: https://adanos.org/privacy
 - Support URL: https://adanos.org/contact
 
+## Screenshot Assets
+
+Chrome Web Store screenshots are prepared as 1280x800 PNG files:
+
+- `output/playwright/screenshots/01-popup-watchlist.png`
+- `output/playwright/screenshots/02-click-ticker-overlay.png`
+- `output/playwright/screenshots/03-source-switcher.png`
+- `output/playwright/screenshots/04-easy-setup.png`
+- `output/playwright/screenshots/05-privacy-permissions.png`
+
 ## Permissions Justification
 
 - `storage`: saves the API key, source preference, analysis period, and watchlist.

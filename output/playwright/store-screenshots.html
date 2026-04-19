@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Adanos Market Sentiment Store Screenshots</title>
+    <style>
+      :root {
+        --text: #1a1a1a;
+        --secondary: #444;
+        --muted: #7f786f;
+        --bg: #f8f7f4;
+        --bg2: #f0efec;
+        --surface: #fcfbf8;
+        --border: #ebe7df;
+        --border2: #d8d2c8;
+        --green: #2e7d32;
+        --red: #c62828;
+        --blue: #1565c0;
+        --warning: #d97706;
+        --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+        font-family: "Space Grotesk", "Space Grotesk Fallback", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background:
+          linear-gradient(180deg, rgba(248, 247, 244, 0) 0%, rgba(240, 239, 236, 0.92) 100%),
+          repeating-linear-gradient(to right, rgba(0, 0, 0, 0.03) 0 1px, transparent 1px 80px),
+          repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 0 1px, transparent 1px 80px),
+          var(--bg);
+        color: var(--text);
+      }
+
+      .shot {
+        display: none;
+        height: 800px;
+        overflow: hidden;
+        padding: 64px 72px;
+        position: relative;
+        width: 1280px;
+      }
+
+      .shot.active {
+        display: grid;
+      }
+
+      .two-col {
+        align-items: center;
+        gap: 64px;
+        grid-template-columns: 440px 1fr;
+      }
+
+      .centered {
+        align-items: center;
+        justify-items: center;
+      }
+
+      .eyebrow {
+        color: var(--secondary);
+        font-family: var(--mono);
+        font-size: 15px;
+        letter-spacing: 0.08em;
+        margin: 0 0 14px;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        font-size: 64px;
+        letter-spacing: -0.045em;
+        line-height: 0.96;
+        margin: 0 0 22px;
+      }
+
+      h2 {
+        font-size: 44px;
+        letter-spacing: -0.04em;
+        line-height: 1;
+        margin: 0 0 14px;
+      }
+
+      p {
+        color: var(--secondary);
+        font-size: 19px;
+        line-height: 1.55;
+        margin: 0;
+      }
+
+      .brand-row {
+        align-items: center;
+        display: flex;
+        gap: 14px;
+        margin-bottom: 28px;
+      }
+
+      .brand-row img {
+        border-radius: 10px;
+        height: 42px;
+        width: 42px;
+      }
+
+      .brand-row strong {
+        font-size: 26px;
+        letter-spacing: -0.035em;
+      }
+
+      .badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 28px;
+      }
+
+      .badge {
+        background: var(--surface);
+        border: 1px solid var(--border2);
+        border-radius: 999px;
+        color: var(--secondary);
+        font-size: 14px;
+        font-weight: 700;
+        padding: 10px 14px;
+      }
+
+      .browser {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.14), 0 2px 12px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+      }
+
+      .browser-bar {
+        align-items: center;
+        background: rgba(252, 251, 248, 0.96);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        gap: 10px;
+        height: 48px;
+        padding: 0 18px;
+      }
+
+      .dot {
+        border-radius: 50%;
+        height: 11px;
+        width: 11px;
+      }
+
+      .dot.red {
+        background: #ff5f57;
+      }
+
+      .dot.yellow {
+        background: #ffbd2e;
+      }
+
+      .dot.green {
+        background: #28c840;
+      }
+
+      .url {
+        background: #f8f7f4;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        color: var(--muted);
+        flex: 1;
+        font-size: 13px;
+        margin-left: 10px;
+        padding: 8px 14px;
+      }
+
+      .page {
+        min-height: 520px;
+        padding: 30px;
+        position: relative;
+      }
+
+      .overlay-browser .page {
+        min-height: 620px;
+      }
+
+      .article-title {
+        color: var(--text);
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        margin-bottom: 18px;
+      }
+
+      .article-copy {
+        color: var(--secondary);
+        display: grid;
+        font-size: 18px;
+        gap: 14px;
+        line-height: 1.7;
+        max-width: 650px;
+      }
+
+      .ticker-mark {
+        background-image: linear-gradient(var(--green), var(--green));
+        background-position: 0 100%;
+        background-repeat: no-repeat;
+        background-size: 100% 1px;
+        color: var(--text);
+        font-weight: 700;
+      }
+
+      .popup {
+        background:
+          linear-gradient(180deg, rgba(248, 247, 244, 0) 0%, rgba(240, 239, 236, 0.86) 100%),
+          repeating-linear-gradient(to right, rgba(0, 0, 0, 0.035) 0 1px, transparent 1px 64px),
+          repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.035) 0 1px, transparent 1px 64px),
+          var(--bg);
+        border: 1px solid var(--border);
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.16), 0 2px 12px rgba(0, 0, 0, 0.06);
+        min-height: 560px;
+        padding: 18px;
+        width: 390px;
+      }
+
+      .popup-head {
+        align-items: center;
+        display: flex;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .popup-head img {
+        border-radius: 8px;
+        height: 32px;
+        width: 32px;
+      }
+
+      .popup h3 {
+        font-size: 24px;
+        letter-spacing: -0.04em;
+        line-height: 1;
+        margin: 0;
+      }
+
+      .source-row {
+        display: grid;
+        gap: 6px;
+        grid-template-columns: repeat(4, 1fr);
+        margin: 14px 0;
+      }
+
+      .source-pill {
+        background: #fff;
+        border: 1px solid var(--border2);
+        border-radius: 8px;
+        color: var(--secondary);
+        font-size: 11px;
+        font-weight: 700;
+        padding: 8px 6px;
+        text-align: center;
+      }
+
+      .source-pill.active {
+        background: #fef2f2;
+        border-color: rgba(198, 40, 40, 0.35);
+        color: var(--red);
+      }
+
+      .search-card {
+        background: rgba(252, 251, 248, 0.94);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        display: grid;
+        gap: 10px;
+        padding: 14px;
+      }
+
+      .form-row {
+        display: flex;
+        gap: 8px;
+      }
+
+      .input {
+        background: var(--surface);
+        border: 1px solid var(--border2);
+        border-radius: 10px;
+        color: var(--text);
+        flex: 1;
+        font: inherit;
+        padding: 11px 12px;
+      }
+
+      .button {
+        background: var(--text);
+        border: 1px solid var(--text);
+        border-radius: 10px;
+        color: #fff;
+        font-weight: 800;
+        padding: 11px 14px;
+      }
+
+      .sentiment-card {
+        background: #fff;
+        border: 1px solid #e5e1da;
+        border-radius: 10px;
+        box-shadow: 0 18px 44px rgba(0, 0, 0, 0.12), 0 2px 10px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+      }
+
+      .sentiment-card.large {
+        width: 400px;
+      }
+
+      .sentiment-head {
+        align-items: center;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        padding: 18px 20px;
+      }
+
+      .title-wrap {
+        align-items: center;
+        display: flex;
+        gap: 12px;
+      }
+
+      .logo-tile {
+        align-items: center;
+        background: #e82127;
+        border-radius: 2px;
+        color: #fff;
+        display: flex;
+        font-size: 17px;
+        font-weight: 800;
+        height: 30px;
+        justify-content: center;
+        width: 30px;
+      }
+
+      .title {
+        display: grid;
+        gap: 2px;
+      }
+
+      .title strong {
+        font-size: 20px;
+        font-weight: 500;
+        letter-spacing: -0.02em;
+        line-height: 1;
+      }
+
+      .title span {
+        color: var(--secondary);
+        font-size: 13px;
+      }
+
+      .source-label,
+      .section-label,
+      .metric-label {
+        color: var(--muted);
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+
+      .metrics {
+        border-bottom: 1px solid var(--border);
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .metric {
+        border-bottom: 1px solid var(--border);
+        border-right: 1px solid var(--border);
+        display: grid;
+        gap: 8px;
+        min-height: 68px;
+        padding: 14px 16px;
+      }
+
+      .metric:nth-child(even) {
+        border-right: 0;
+      }
+
+      .metric:nth-last-child(-n + 2) {
+        border-bottom: 0;
+      }
+
+      .metric strong {
+        font-family: var(--mono);
+        font-size: 18px;
+        font-weight: 500;
+        letter-spacing: -0.04em;
+        line-height: 1;
+      }
+
+      .positive {
+        color: var(--green);
+      }
+
+      .negative {
+        color: var(--red);
+      }
+
+      .trendline {
+        border-bottom: 1px solid var(--border);
+        display: grid;
+        gap: 6px;
+        padding: 14px 20px 9px;
+      }
+
+      .trendline svg {
+        display: block;
+        height: 58px;
+        width: 100%;
+      }
+
+      .summary {
+        display: grid;
+        gap: 8px;
+        padding: 16px 20px 18px;
+      }
+
+      .summary p {
+        font-size: 13px;
+        line-height: 1.48;
+      }
+
+      .switcher {
+        border-bottom: 1px solid var(--border);
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .switcher div {
+        background: #fff;
+        border-right: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        min-height: 34px;
+        padding: 8px 5px;
+        text-align: center;
+        text-transform: uppercase;
+      }
+
+      .switcher div.active {
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      .settings {
+        width: 430px;
+      }
+
+      .settings .search-card {
+        gap: 12px;
+      }
+
+      .settings label {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .privacy-grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(3, 1fr);
+        margin-top: 34px;
+      }
+
+      .privacy-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        min-height: 150px;
+        padding: 22px;
+      }
+
+      .privacy-card strong {
+        display: block;
+        font-size: 20px;
+        letter-spacing: -0.03em;
+        margin-bottom: 10px;
+      }
+
+      .footer-note {
+        bottom: 34px;
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 13px;
+        left: 72px;
+        position: absolute;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="shot two-col" data-shot="popup">
+      <div>
+        <div class="brand-row">
+          <img src="../../public/icons/icon-128.png" alt="" />
+          <strong>Adanos Market Sentiment</strong>
+        </div>
+        <p class="eyebrow">Chrome extension for market research</p>
+        <h1>Check stock sentiment while browsing.</h1>
+        <p>Compare Reddit, X, News, and Polymarket sentiment for selected tickers with one Adanos API key.</p>
+        <div class="badges">
+          <span class="badge">Reddit</span>
+          <span class="badge">X / FinTwit</span>
+          <span class="badge">News</span>
+          <span class="badge">Polymarket</span>
+        </div>
+      </div>
+      <div class="popup">
+        <div class="popup-head">
+          <img src="../../public/icons/icon-128.png" alt="" />
+          <div>
+            <p class="eyebrow">Real-time market sentiment API</p>
+            <h3>Adanos Market Sentiment</h3>
+          </div>
+        </div>
+        <p>Check stock sentiment across Reddit, X, News, and Polymarket with one Adanos API key.</p>
+        <div class="source-row">
+          <div class="source-pill active">Reddit</div>
+          <div class="source-pill">X / FinTwit</div>
+          <div class="source-pill">News</div>
+          <div class="source-pill">Polymarket</div>
+        </div>
+        <div class="search-card">
+          <p class="eyebrow">Reddit</p>
+          <p>Retail investor discussion across stock communities.</p>
+          <div class="form-row">
+            <div class="input">AAPL, TSLA, NVDA</div>
+            <div class="button">Check</div>
+          </div>
+        </div>
+        <div style="height: 14px"></div>
+        <div class="sentiment-card">
+          <div class="sentiment-head">
+            <div class="title-wrap">
+              <div class="logo-tile">A</div>
+              <div class="title"><strong>AAPL</strong><span>Apple Inc</span></div>
+            </div>
+            <span class="source-label">Reddit sentiment</span>
+          </div>
+          <div class="metrics">
+            <div class="metric"><span class="metric-label">Buzz Score</span><strong>71.4</strong></div>
+            <div class="metric"><span class="metric-label">Bullish</span><strong class="positive">52%</strong></div>
+            <div class="metric"><span class="metric-label">Mentions</span><strong>862</strong></div>
+            <div class="metric"><span class="metric-label">Trend</span><strong class="positive">↑ rising</strong></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="shot two-col" data-shot="overlay">
+      <div class="browser overlay-browser">
+        <div class="browser-bar">
+          <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+          <span class="url">market-news.example/research</span>
+        </div>
+        <div class="page">
+          <div class="article-title">AI chip leaders rally as retail attention accelerates</div>
+          <div class="article-copy">
+            <p>
+              Analysts note that <span class="ticker-mark">NVDA</span> continues to dominate AI infrastructure
+              discussions while <span class="ticker-mark">AMD</span> gains momentum into earnings.
+            </p>
+            <p>
+              Click any detected ticker to open source-specific Adanos sentiment without sending page contents.
+            </p>
+          </div>
+          <div class="sentiment-card large" style="position: absolute; right: 38px; top: 118px">
+            <div class="sentiment-head">
+              <div class="title-wrap">
+                <div class="logo-tile">N</div>
+                <div class="title"><strong>NVDA</strong><span>NVIDIA Corporation</span></div>
+              </div>
+              <span class="source-label">Reddit sentiment</span>
+            </div>
+            <div class="switcher">
+              <div class="active">Reddit</div>
+              <div>X / FinTwit</div>
+              <div>News</div>
+              <div>Polymarket</div>
+            </div>
+            <div class="metrics">
+              <div class="metric"><span class="metric-label">Buzz Score</span><strong>72.3</strong></div>
+              <div class="metric"><span class="metric-label">Bullish</span><strong class="positive">52%</strong></div>
+              <div class="metric"><span class="metric-label">Mentions</span><strong>1,284</strong></div>
+              <div class="metric"><span class="metric-label">Trend</span><strong class="positive">↑ rising</strong></div>
+            </div>
+            <div class="trendline">
+              <span class="section-label">7-day trend</span>
+              <svg viewBox="0 0 356 58" aria-hidden="true">
+                <path d="M 11 45 L 66 39 L 122 35 L 178 27 L 234 22 L 290 16 L 345 13" fill="none" stroke="#9b9b9b" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </div>
+            <div class="summary">
+              <span class="section-label">Trend summary</span>
+              <p>Reddit sentiment for NVDA is currently bullish with 1,284 mentions across Reddit communities.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="eyebrow">Ticker detection</p>
+        <h1>Sentiment appears only when users click.</h1>
+        <p>Detected symbols stay subtle on the page. The card opens on click, supports keyboard access, and lets users switch sources inside the overlay.</p>
+      </div>
+    </section>
+
+    <section class="shot two-col" data-shot="sources">
+      <div>
+        <p class="eyebrow">One ticker, four perspectives</p>
+        <h1>Switch sources without leaving the page.</h1>
+        <p>Reddit, X / FinTwit, News, and Polymarket each show their own activity metric while keeping the same clean sentiment card layout.</p>
+      </div>
+      <div class="sentiment-card large">
+        <div class="sentiment-head">
+          <div class="title-wrap">
+            <div class="logo-tile">T</div>
+            <div class="title"><strong>TSLA</strong><span>Tesla Inc</span></div>
+          </div>
+          <span class="source-label">News sentiment</span>
+        </div>
+        <div class="switcher">
+          <div>Reddit</div>
+          <div>X / FinTwit</div>
+          <div class="active">News</div>
+          <div>Polymarket</div>
+        </div>
+        <div class="metrics">
+          <div class="metric"><span class="metric-label">Buzz Score</span><strong>64.8</strong></div>
+          <div class="metric"><span class="metric-label">Bullish</span><strong class="negative">28%</strong></div>
+          <div class="metric"><span class="metric-label">Sources</span><strong>37</strong></div>
+          <div class="metric"><span class="metric-label">Trend</span><strong class="negative">↓ falling</strong></div>
+        </div>
+        <div class="trendline">
+          <span class="section-label">7-day trend</span>
+          <svg viewBox="0 0 356 58" aria-hidden="true">
+            <path d="M 11 18 L 66 23 L 122 30 L 178 27 L 234 35 L 290 40 L 345 44" fill="none" stroke="#9b9b9b" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <div class="summary">
+          <span class="section-label">Trend summary</span>
+          <p>News sentiment for TSLA is currently bearish with 37 sources across market news publishers.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="shot two-col" data-shot="setup">
+      <div class="settings popup">
+        <div class="popup-head">
+          <img src="../../public/icons/icon-128.png" alt="" />
+          <div>
+            <p class="eyebrow">Adanos Market Sentiment</p>
+            <h3>Settings</h3>
+          </div>
+        </div>
+        <div class="search-card">
+          <label>Adanos API key</label>
+          <div class="input">sk_live_••••••••••••••••</div>
+          <label>Default source</label>
+          <div class="input">Reddit</div>
+          <label>Default period in days</label>
+          <div class="input">7</div>
+          <label>Default stock watchlist</label>
+          <div class="input">NVDA, TSLA, AAPL</div>
+          <div class="button" style="text-align: center">Save settings</div>
+        </div>
+      </div>
+      <div>
+        <p class="eyebrow">Easy setup</p>
+        <h1>Bring your own Adanos API key.</h1>
+        <p>Your key is stored locally in Chrome storage and only sent to api.adanos.org when a sentiment lookup is requested.</p>
+        <div class="badges">
+          <span class="badge">No analytics</span>
+          <span class="badge">No ads</span>
+          <span class="badge">No remote JavaScript</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="shot centered" data-shot="privacy">
+      <div style="max-width: 980px; text-align: center">
+        <div class="brand-row" style="justify-content: center">
+          <img src="../../public/icons/icon-128.png" alt="" />
+          <strong>Adanos Market Sentiment</strong>
+        </div>
+        <p class="eyebrow">Built for focused market research</p>
+        <h1>Minimal permissions. Local ticker detection.</h1>
+        <p>Webpage text is scanned locally to detect likely stock symbols. Only the clicked ticker, selected source, and analysis period are sent to the Adanos API.</p>
+        <div class="privacy-grid">
+          <div class="privacy-card"><strong>storage</strong><p>Saves API key, source, period, and watchlist locally.</p></div>
+          <div class="privacy-card"><strong>contextMenus</strong><p>Adds right-click lookup for selected ticker text.</p></div>
+          <div class="privacy-card"><strong>api.adanos.org</strong><p>Calls the Market Sentiment API only after user action.</p></div>
+        </div>
+      </div>
+      <div class="footer-note">Chrome Web Store screenshot · 1280 × 800</div>
+    </section>
+
+    <script>
+      const shot = new URLSearchParams(window.location.search).get("shot") || "popup";
+      document.querySelector(`[data-shot="${shot}"]`)?.classList.add("active");
+    </script>
+  </body>
+</html>
