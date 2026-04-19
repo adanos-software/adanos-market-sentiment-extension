@@ -74,13 +74,24 @@ describe("Chrome Web Store scope", () => {
     const popupScript = readFileSync(resolve("src/popup.ts"), "utf8");
     const popupStyles = readFileSync(resolve("src/styles.css"), "utf8");
 
+    expect(popupScript).toContain('class: "brand-mark"');
+    expect(popupScript).toContain('src: "icons/icon-32.png"');
     expect(popupScript).toContain('class: "sentiment-card"');
     expect(popupScript).toContain('class: "trendline"');
     expect(popupScript).toContain('class: "sentiment-summary"');
     expect(popupStyles).toContain(".sentiment-card");
     expect(popupStyles).toContain("background: #fff");
-    expect(popupStyles).toContain("--c-red: #e11936");
+    expect(popupStyles).toContain("--c-red: #c62828");
     expect(popupStyles).not.toContain("--c-terminal");
     expect(popupStyles).not.toContain('content: "●  ●  ●"');
+  });
+
+  it("uses the Adanos candlestick mark for extension icons", () => {
+    const iconSvg = readFileSync(resolve("assets/icon.svg"), "utf8");
+
+    expect(iconSvg).toContain('fill="#1A1A1A"');
+    expect(iconSvg).toContain('fill="#2E7D32"');
+    expect(iconSvg).toContain('fill="#C62828"');
+    expect(iconSvg).not.toContain(">A<");
   });
 });

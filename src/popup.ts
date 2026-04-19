@@ -195,6 +195,7 @@ function render(state: State): void {
   app.replaceChildren(
     el("div", { class: "shell" }, [
       el("header", { class: "brand" }, [
+        el("img", { alt: "", class: "brand-mark", height: "32", src: "icons/icon-32.png", width: "32" }),
         el("div", {}, [el("p", { class: "eyebrow" }, ["Real-time market sentiment API"]), el("h1", {}, [PRODUCT_NAME])]),
       ]),
       state.settings.apiKey

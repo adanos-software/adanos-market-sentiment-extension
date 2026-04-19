@@ -15,9 +15,8 @@
   --c-border-medium: #d8d2c8;
   --c-green: #2e7d32;
   --c-blue: #1565c0;
-  --c-red: #e11936;
-  --c-red-dark: #c62828;
-  --c-red-soft: #fff0f2;
+  --c-red: #c62828;
+  --c-red-soft: #fef2f2;
   --c-warning: #d97706;
   --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
 }
@@ -62,7 +61,6 @@ button {
   gap: 12px;
 }
 
-.brand::before,
 .brand-tile {
   align-items: center;
   background: var(--c-red);
@@ -75,11 +73,13 @@ button {
   line-height: 1;
 }
 
-.brand::before {
-  content: "A";
-  font-size: 14px;
-  height: 28px;
-  width: 28px;
+.brand-mark {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: block;
+  flex: 0 0 auto;
+  height: 32px;
+  width: 32px;
 }
 
 .brand-tile {
@@ -290,7 +290,7 @@ h1 {
 }
 
 .negative {
-  color: var(--c-red-dark);
+  color: var(--c-red);
 }
 
 .neutral {
@@ -298,7 +298,7 @@ h1 {
 }
 
 .falling {
-  color: var(--c-red-dark);
+  color: var(--c-red);
 }
 
 .rising {
