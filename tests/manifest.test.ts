@@ -23,7 +23,7 @@ describe("Chrome Web Store scope", () => {
 
     expect(manifest.name).toBe("Adanos Market Sentiment");
     expect(manifest.short_name).toBe("Adanos MS");
-    expect(manifest.version).toBe("1.0.1");
+    expect(manifest.version).toBe("1.0.2");
     expect(manifest.permissions).toEqual(["storage", "contextMenus", "activeTab", "scripting"]);
     expect(manifest.host_permissions).toEqual(["https://api.adanos.org/*"]);
     expect(manifest.content_scripts).toBeUndefined();
