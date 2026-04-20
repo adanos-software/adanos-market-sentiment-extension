@@ -32,7 +32,6 @@ type RawSentimentRecord = {
   market_count?: unknown;
   mentions?: unknown;
   score?: unknown;
-  sentiment?: unknown;
   sentiment_score?: unknown;
   source_count?: unknown;
   subreddit_count?: unknown;
@@ -90,7 +89,7 @@ function normalizeRecord(record: RawSentimentRecord): SentimentRecord | null {
     companyName: toStringValue(record.company_name),
     marketCount: toNumber(record.market_count),
     mentions: toNumber(record.mentions),
-    sentimentScore: toNumber(record.sentiment_score ?? record.sentiment ?? record.score),
+    sentimentScore: toNumber(record.sentiment_score ?? record.score),
     sourceCount: toNumber(record.source_count),
     subredditCount: toNumber(record.subreddit_count),
     ticker: ticker.replace(/^\$/, "").toUpperCase(),

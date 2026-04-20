@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Adanos Market Sentiment",
   "short_name": "Adanos MS",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Check stock market sentiment from Reddit, X, News, and Polymarket for selected tickers.",
   "homepage_url": "https://adanos.org",
   "icons": {
