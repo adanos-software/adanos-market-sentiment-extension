@@ -76,7 +76,6 @@ type RawSentimentRecord = {
   company_name?: unknown;
   mentions?: unknown;
   score?: unknown;
-  sentiment?: unknown;
   sentiment_score?: unknown;
   source_count?: unknown;
   symbol?: unknown;
@@ -194,7 +193,7 @@ function normalizeRecord(record: RawSentimentRecord): SentimentRecord | null {
     buzzScore: toNumber(record.buzz_score ?? record.buzz),
     companyName: toStringValue(record.company_name),
     mentions: toNumber(record.mentions),
-    sentimentScore: toNumber(record.sentiment_score ?? record.sentiment ?? record.score),
+    sentimentScore: toNumber(record.sentiment_score ?? record.score),
     sourceCount: toNumber(record.source_count),
     ticker: ticker.replace(/^\$/, "").toUpperCase(),
     tradeCount: toNumber(record.trade_count),
